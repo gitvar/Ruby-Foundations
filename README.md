@@ -1,3 +1,3 @@
 # Ruby-Foundations
 
-This repository contains examples and exercises in the Launch School Moulde: Ruby Foundations. 
+This repository contains examples and exercises contained in the Launch School Module: Ruby Foundations. 
