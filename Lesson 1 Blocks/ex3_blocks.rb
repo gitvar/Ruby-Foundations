@@ -6,4 +6,5 @@ def compare(str)
 end
 
 compare("hi") { |word| word.upcase }
+
 compare('hello') { |word| word.slice(word.length-3..word.length) }
