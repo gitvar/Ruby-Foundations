@@ -6,5 +6,5 @@ def time_it
 end
 
 time_it { sleep(2) }
-
-time_it { puts "Hi there!" }
+puts
+time_it { 10.times { puts "Hi there!" } }

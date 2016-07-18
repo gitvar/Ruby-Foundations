@@ -1,3 +1,5 @@
+## Yielding with an argument
+
 # method implementation
 def increment(number)
   if block_given?
@@ -8,6 +10,4 @@ def increment(number)
 end
 
 # method invocation
-increment(5) do |num|
-  puts num
-end
+increment(5) { |num| puts num }
