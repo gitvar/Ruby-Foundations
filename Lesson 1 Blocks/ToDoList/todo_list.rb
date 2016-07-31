@@ -1,11 +1,13 @@
-
+#
+# class Todo:
+#
 class Todo
-  DONE_MARKER = 'X'
-  UNDONE_MARKER = ' '
+  DONE_MARKER = 'X'.freeze
+  UNDONE_MARKER = ' '.freeze
 
   attr_accessor :title, :description, :done
 
-  def initialize(title, description='')
+  def initialize(title, description = '')
     @title = title
     @description = description
     @done = false
@@ -33,7 +35,6 @@ end
 # on a TodoList object, including iteration and selection.
 
 class TodoList
-  require 'pry'
   attr_accessor :title
 
   def initialize(title)
@@ -41,14 +42,12 @@ class TodoList
     @todos = []
   end
 
-  # rest of class needs implementation
-
   def add(item)
     raise TypeError, 'Can only add Todo objects' unless item.instance_of? Todo
     @todos << item
   end
 
-  alias_method :<<, :add
+  alias << add
 
   def size
     @todos.size
@@ -64,14 +63,14 @@ class TodoList
 
   def item_at(index)
     # raise IndexError, "No Todo object at index:#{index}" if !@todos[index]
-    @todos.fetch(index)
+    @todos.fetch(index) # fetch raises an exception thus re-use fetch all over!
   end
 
   def mark_done_at(index)
     # raise IndexError, "No Todo object at index:#{index}" if !@todos[index]
     # @todos[index].done!
     # @todos[index]
-    item_at(index).done!
+    item_at(index).done! # fetch will raise an error if the index is wrong.
   end
 
   def mark_undone_at(index)
@@ -81,15 +80,7 @@ class TodoList
       # @todos[index].undone!
       # @todos[index]
     # end
-    item_at(index).undone!
-  end
-
-  def done!
-    @todos.each_index { |index| mark_done_at(index) }
-  end
-
-  def undone!
-    @todos.each_index { |index| mark_undone_at(index) }
+    item_at(index).undone! # fetch will raise an error if the index is wrong.
   end
 
   def shift
@@ -101,9 +92,73 @@ class TodoList
   end
 
   def remove_at(index)
-    @todos.delete(item_at(index))
+    @todos.delete(item_at(index)) # fetch will raise an error: in item_at().
     # @todos.delete_at(index)
     # raise IndexError, "remove_at(#{index})" unless @todos.delete_at(index)
+  end
+
+  # Todo_List_each:
+  #
+  # def each
+  #   index = 0
+  #   while index < @todos.size
+  #     yield(@todos[index])
+  #     index += 1
+  #   end
+  # end
+
+  # def each
+  #   @todos.each { |todo_item|  yield(todo_item) }
+  #   self
+  # end
+
+  # Todo_List_select
+  #
+  # def select
+  #   select_array = []
+  #   @todos.each { |todo_item| select_array << todo_item if yield(todo_item) }
+  #
+  #   new_list = TodoList.new("Selected Todos:")
+  #   select_array.each { |todo_item| new_list.add(todo_item) }
+  #   new_list
+  # end
+
+  def find_by_title(string)
+    select { |todo_item| todo_item.title == string }.first
+    # selected_list = select { |todo_item| todo_item.title == string }
+    # selected_list.first
+  end
+
+  def all_done_items
+    select { |todo_item| todo_item.done? }
+  end
+
+  def all_not_done_items
+    select { |todo_item| !todo_item.done? }
+  end
+
+  def mark_done(string)
+    # select { |todo_item| todo_item.title == string }.first.done!
+    find_by_title(string) && find_by_title(string).done!
+  end
+
+  def done!
+    each { |todo_item| todo_item.done! }
+  end
+
+  def undone!
+    each { |todo_item| todo_item.undone! }
+  end
+
+  def each
+    @todos.each { |todo_item|  yield(todo_item) }
+    self
+  end
+
+  def select
+    new_list = TodoList.new("Selected Todos:")
+    each { |todo_item| new_list.add(todo_item) if yield(todo_item) }
+    new_list
   end
 
   def to_s
@@ -148,6 +203,35 @@ puts
 # size
 puts "The list contains #{list.size} Todo items."
 puts
+
+puts "Find by title:"
+result = list.find_by_title("Do the washing")
+puts result.inspect
+puts
+
+# mark_done_at
+puts "list.mark_done_at(0, 2, 6):"
+list.mark_done_at(0)            # marks the 2nd item as done
+list.mark_done_at(2)            # marks the 2nd item as done
+list.mark_done_at(6)            # marks the 2nd item as done
+puts list
+# list.mark_done_at(100)          # raises IndexError
+puts
+
+puts "Mark Done: 'Do the washinggg'"
+list.mark_done("Do the washinggg")
+puts
+
+puts "All Done Items:"
+result = list.all_done_items
+puts result
+puts
+
+puts "All Not Done Items:"
+result = list.all_not_done_items
+puts result
+puts
+
 # first
 puts "list.first:"
 puts list.first        # returns todo1, which is the first item in the list
@@ -162,15 +246,6 @@ puts
 puts "list.item_at(2):"
 puts list.item_at(2)          # returns 2nd item in list (zero based index)
 # puts list.item_at(100)        # raises IndexError
-puts
-
-# # ---- Marking items in the list -----
-# mark_done_at
-# list.mark_done_at               # raises ArgumentError
-puts "list.mark_done_at(2):"
-list.mark_done_at(2)            # marks the 2nd item as done
-puts list
-# list.mark_done_at(100)          # raises IndexError
 puts
 
 # mark_undone_at
@@ -196,12 +271,12 @@ puts
 
 # shift
 puts "list.shift:"
-puts list.shift           # removes and returns the first item in list
+puts list.shift             # removes and returns the first item in list
 puts
 
 # pop
 puts "list.pop:"
-puts list.pop                        # removes and returns the last item in list
+puts list.pop             # removes and returns the last item in list
 puts
 puts "list:"
 puts list
@@ -213,7 +288,6 @@ puts "list.remove_at(1):"
 puts list.remove_at(1)            # removes and returns the 2nd item
 # list.remove_at(100)             # raises IndexError
 puts
-
 puts list
 puts
 
@@ -247,6 +321,43 @@ puts "mark all done:"
 list.done!
 puts list
 puts
+
 puts "mark all undone:"
 list.undone!
 puts list
+puts
+
+puts "list.mark_done_at(1):"
+list.mark_done_at(1)
+puts list
+puts
+
+# .each
+puts "list.each:"
+list.each do |todo|
+puts todo                   # calls Todo#to_s
+end
+puts
+
+# The above should send each of the 3 `Todo` objects to `puts`, which will automatically invoke the `Todo#to_s` method. The output should be:
+
+# [ ] Buy milk
+# [ ] Clean room
+# [ ] Go to gym
+
+puts "list.to_a:"
+list.to_a
+puts
+
+puts "select:"
+todo4.done!
+# todo6.done!
+# results = list.select { |todo| todo.done? } # you need to implement this
+results = list.select(&:done?) # you need to implement this
+puts results.inspect
+puts
+
+puts "Find by title:"
+result = list.find_by_title("Do the washing")
+puts result.inspect
+puts
