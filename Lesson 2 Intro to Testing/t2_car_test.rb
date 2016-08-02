@@ -6,8 +6,14 @@ require_relative 'car'
 
 class CarTest < MiniTest::Test
 
+# SEAT: Setup, Execute, Assert, and Teardown.
+
   def setup
-    @car = Car.new
+    @car = Car.new # Define and Use an instance variable here.
+  end
+
+  def teardown
+    puts "-"
   end
 
 # 1.
@@ -37,7 +43,7 @@ class CarTest < MiniTest::Test
     assert_includes(array, @car)
   end
 
-  # Refutions: Opposite of Assertions!
+  # Refutions:= Opposite of Assertions!
 
 # 6.
   def test_doors
@@ -52,8 +58,15 @@ class CarTest < MiniTest::Test
 
 # 8.
   def test_raise_initialize_with_arg
-    assert_raises(ArgumentError) do
-      car = Car.new(name: "Joey")
-    end
+    assert_raises(ArgumentError) { Car.new("Johnny", 6) }
+  end
+
+# 9.
+  def test_value_equality
+    car1 = Car.new("Mustang Sally")
+    car2 = Car.new("Mustang Sally")
+
+    assert_equal(car1, car2)
+    # assert_same(car1, car2)
   end
 end
