@@ -20,6 +20,10 @@ class Todo
     done
   end
 
+  def not_done?
+    !done
+  end
+
   def undone!
     self.done = false
   end
@@ -128,7 +132,7 @@ class TodoList
   end
 
   def to_s
-    todo_list_string = "ToDo List: \n"
+    todo_list_string = "---- Today's Todos ----\n"
     todo_list_string << @todos.map(&:to_s).join("\n")
     todo_list_string
   end
